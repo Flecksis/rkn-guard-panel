@@ -106,7 +106,9 @@ fn enroll_restart_and_reuse_one_connection() -> Result<()> {
         };
         node.run_on_socket(Arc::new(cfg), &socket).await.unwrap()
     });
-    let data = json!({"host":"127.0.0.1","port":port,"host_key":host_pub,"bootstrap_key":bootstrap.to_openssh(Default::default())?.as_str(),"expires":chrono::Utc::now().timestamp()+60});
+    // На сервере код ещё действует, часы компьютера панели опережают его на час.
+    let server_now = chrono::Utc::now().timestamp() - 3600;
+    let data = json!({"host":"127.0.0.1","port":port,"host_key":host_pub,"bootstrap_key":bootstrap.to_openssh(Default::default())?.as_str(),"expires":server_now+300});
     let code = format!(
         "RKN1.{}",
         URL_SAFE_NO_PAD.encode(serde_json::to_vec(&data)?)

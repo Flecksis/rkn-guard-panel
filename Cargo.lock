@@ -2633,7 +2633,7 @@ dependencies = [
 
 [[package]]
 name = "rkn-guard-panel"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "base64",

@@ -69,7 +69,9 @@ pub struct Pair {
     port: u16,
     host_key: String,
     bootstrap_key: String,
-    expires: i64,
+    // Срок проверяет сервер по своим часам при входе и выдаче постоянного ключа.
+    #[serde(rename = "expires")]
+    _expires: i64,
 }
 fn decode(code: &str) -> Result<Pair> {
     ensure!(code.len() < 32768, "Слишком длинный код");
@@ -80,10 +82,6 @@ fn decode(code: &str) -> Result<Pair> {
                 .context("Ожидается код RKN1")?,
         )?,
     )?;
-    ensure!(
-        p.expires > chrono::Utc::now().timestamp(),
-        "Срок кода истёк"
-    );
     ensure!(
         p.port != 0
             && !p.host.is_empty()
@@ -179,6 +177,9 @@ impl Session {
             .map_err(|_| {
                 anyhow::anyhow!("Сервер не ответил на запрос входа rkn-guard-user за 20 секунд")
             })??;
+            if !auth.success() && operation == "panel enroll" {
+                bail!("Сервер отклонил временный ключ. Получите новый код в пункте 9 меню rkn и повторите подключение.");
+            }
             ensure!(auth.success(), "Сервер отклонил ключ панели");
             Ok::<_, anyhow::Error>(conn)
         })?;
