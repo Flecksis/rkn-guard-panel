@@ -1,0 +1,30 @@
+[package]
+name = "rkn-guard-panel"
+version = "0.5.0"
+edition = "2024"
+
+[[bin]]
+name = "rkn-guard-panel"
+path = "src/main.rs"
+
+[dependencies]
+eframe = { version = "0.31.1", default-features = false, features = ["default_fonts", "glow"] }
+egui = "0.31.1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+base64 = "0.22"
+rusqlite = { version = "0.32", features = ["bundled"] }
+russh = { version = "0.65.2", default-features = false, features = ["ring", "rsa"] }
+tokio = { version = "1", features = ["rt-multi-thread", "net", "time", "io-util"] }
+rand = "0.10"
+anyhow = "1"
+chrono = "0.4"
+windows-sys = { version = "0.59", features = ["Win32_Security_Cryptography","Win32_Foundation"] }
+
+[profile.release]
+strip = true
+lto = "thin"
+opt-level = "s"
+
+[dev-dependencies]
+tempfile = "3"
